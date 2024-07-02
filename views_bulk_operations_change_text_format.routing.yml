@@ -1,0 +1,7 @@
+views_bulk_operations_change_text_format.change_text_format_confirm:
+  path: '/admin/content/vbo/change-text-format'
+  defaults:
+    _title: 'Change Text Format'
+    _form: 'Drupal\views_bulk_operations_change_text_format\Form\ChangeTextFormatForm'
+  requirements:
+    _permission: 'use views bulk change text format'

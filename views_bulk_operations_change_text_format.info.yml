@@ -1,0 +1,8 @@
+name: 'views bulk operations change text format'
+type: module
+description: 'views bulk operations change text format'
+package: Views
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:views
+  - drupal:views_bulk_operations

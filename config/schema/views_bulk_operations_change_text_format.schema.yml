@@ -1,0 +1,9 @@
+# Since 4.x preliminary configuration schema should be defined for actions
+# that have additional configuration.
+views_bulk_operations.action_config.views_bulk_operations_change_text_format:
+  type: views_bulk_operations_action_config
+  label: 'Change text format'
+  mapping:
+    vboch_preconfig_setting:
+      type: string
+      label: 'Preconfig setting'
