@@ -1,22 +1,23 @@
 <?php
+
 namespace Drupal\views_bulk_operations_change_text_format\Plugin\Action;
 
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\views\Views;
 use Drupal\views_bulk_edit\Form\BulkEditFormTrait;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsPreconfigurationInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\views\Views;
-use Drupal\views_bulk_operations\Service\ViewsbulkOperationsViewData;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessor;
-use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Database\Connection;
+use Drupal\views_bulk_operations\Service\ViewsbulkOperationsViewData;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * An example action covering most of the possible options.
@@ -36,7 +37,7 @@ use Drupal\Core\Database\Connection;
  *   api_version = "1",
  * )
  */
-class ViewsBulkOperationsChangeTextFormatAction   extends ViewsBulkOperationsActionBase implements ContainerFactoryPluginInterface, ViewsBulkOperationsPreconfigurationInterface {
+class ViewsBulkOperationsChangeTextFormatAction extends ViewsBulkOperationsActionBase implements ContainerFactoryPluginInterface, ViewsBulkOperationsPreconfigurationInterface {
 
   use BulkEditFormTrait;
 
@@ -96,20 +97,7 @@ class ViewsBulkOperationsChangeTextFormatAction   extends ViewsBulkOperationsAct
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entityFieldManager
    *   The entity field manager service.
    */
-  public function __construct(
-    array $configuration,
-    $plugin_id,
-    $plugin_definition,
-    ViewsbulkOperationsViewData $viewDataService,
-    ViewsBulkOperationsActionProcessor $actionProcessor,
-    EntityTypeManagerInterface $entityTypeManager,
-    EntityTypeBundleInfoInterface $bundleInfo,
-    Connection $database,
-    TimeInterface $time,
-    AccountInterface $currentUser,
-    EntityRepositoryInterface $entityRepository,
-    EntityFieldManagerInterface $entityFieldManager
-  ) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ViewsbulkOperationsViewData $viewDataService, ViewsBulkOperationsActionProcessor $actionProcessor, EntityTypeManagerInterface $entityTypeManager, EntityTypeBundleInfoInterface $bundleInfo, Connection $database, TimeInterface $time, AccountInterface $currentUser, EntityRepositoryInterface $entityRepository, EntityFieldManagerInterface $entityFieldManager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->viewDataService = $viewDataService;
     $this->actionProcessor = $actionProcessor;
@@ -126,20 +114,7 @@ class ViewsBulkOperationsChangeTextFormatAction   extends ViewsBulkOperationsAct
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('views_bulk_operations.data'),
-      $container->get('views_bulk_operations.processor'),
-      $container->get('entity_type.manager'),
-      $container->get('entity_type.bundle.info'),
-      $container->get('database'),
-      $container->get('datetime.time'),
-      $container->get('current_user'),
-      $container->get('entity.repository'),
-      $container->get('entity_field.manager')
-    );
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('views_bulk_operations.data'), $container->get('views_bulk_operations.processor'), $container->get('entity_type.manager'), $container->get('entity_type.bundle.info'), $container->get('database'), $container->get('datetime.time'), $container->get('current_user'), $container->get('entity.repository'), $container->get('entity_field.manager'));
   }
 
   /**
@@ -172,7 +147,6 @@ class ViewsBulkOperationsChangeTextFormatAction   extends ViewsBulkOperationsAct
    *   keyed by entity type IDs.
    */
   protected function getViewBundles() {
-
     // Get a list of all entity types and bundles of the view.
     $bundle_data = [];
     $bundle_info = $this->bundleInfo->getAllBundleInfo();
@@ -182,7 +156,7 @@ class ViewsBulkOperationsChangeTextFormatAction   extends ViewsBulkOperationsAct
     if (!empty($this->context['list'])) {
       $query_data = [];
       foreach ($this->context['list'] as $item) {
-        list(,, $entity_type_id, $id,) = $item;
+        [, , $entity_type_id, $id,] = $item;
         $query_data[$entity_type_id][$id] = $id;
       }
       foreach ($query_data as $entity_type_id => $entity_ids) {
@@ -236,7 +210,6 @@ class ViewsBulkOperationsChangeTextFormatAction   extends ViewsBulkOperationsAct
           foreach ($view->result as $row) {
             $entities[] = $this->viewDataService->getEntity($row);
           }
-
         }
         else {
           foreach ($this->context['list'] as $item) {

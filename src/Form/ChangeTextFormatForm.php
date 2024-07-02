@@ -23,7 +23,6 @@ final class ChangeTextFormatForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
-
     $form['message'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Message'),
